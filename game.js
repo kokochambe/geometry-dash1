@@ -651,3 +651,61 @@ drawPlayer() {
     
     this.ctx.restore();
 }
+updateScore() {
+    if (this.scoreElement) {
+        const scoreElement = this.scoreElement;
+        scoreElement.innerHTML = `Очки: <span>${this.score}</span>`;
+        
+        // Эффект при получении очков
+        scoreElement.classList.add('score-pop');
+        setTimeout(() => {
+            scoreElement.classList.remove('score-pop');
+        }, 300);
+    }
+    
+    if (this.score > this.highScore) {
+        this.highScore = this.score;
+        if (this.highScoreElement) {
+            const highScoreElement = this.highScoreElement;
+            highScoreElement.innerHTML = `Рекорд: <span>${this.highScore}</span>`;
+            
+            // Эффект нового рекорда
+            highScoreElement.classList.add('new-record');
+            highScoreElement.classList.add('high-score-glow');
+            
+            // Звуковой эффект (можно добавить)
+            this.playSound('score');
+            
+            setTimeout(() => {
+                highScoreElement.classList.remove('new-record');
+            }, 1500);
+        }
+        localStorage.setItem('geometryDashHighScore', this.highScore);
+    }
+}
+
+// В методе gameOver() добавь финальный эффект
+gameOver() {
+    this.gameState = 'gameover';
+
+    const gameOverScreen = document.getElementById('gameOverScreen');
+    const finalScore = document.getElementById('finalScore');
+    const menu = document.getElementById('menu');
+    const gameContainer = document.getElementById('gameContainer');
+
+    if (gameOverScreen) gameOverScreen.classList.remove('hidden');
+    if (finalScore) {
+        finalScore.textContent = `🎯 Очки: ${this.score}`;
+        finalScore.innerHTML = `🎯 Очки: <span style="color: #FFD700; font-size: 28px;">${this.score}</span>`;
+    }
+    if (menu) menu.classList.remove('hidden');
+    if (gameContainer) {
+        gameContainer.classList.remove('playing');
+    }
+
+    this.screenShake = 2;
+    this.createParticleEffect(this.player.x + this.player.width/2, this.player.y + this.player.height/2, 30, '#FF0000');
+    this.playSound('crash');
+    this.sendScoreToBot();
+}
+}
