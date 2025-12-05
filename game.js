@@ -1345,8 +1345,24 @@ class GeometryDash {
             requestAnimationFrame(() => this.gameLoop());
         }
     }
-}
 
+setupMobile() {
+    document.addEventListener('touchmove', (e) => {
+        if (e.scale != 1) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    document.addEventListener('selectstart', (e) => {
+        e.preventDefault();
+    });
+
+    const viewport = document.querySelector('meta[name=viewport]');
+    if (viewport) {
+        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+    }
+}
+}
 // ==================== ЗАПУСК ====================
 
 function initializeGame() {
