@@ -41,10 +41,12 @@
 </style>
 <body>
     <div id="gameContainer">
-        <div id="ui">
-            <div id="score">Очки: 0</div>
-            <div id="highScore">Рекорд: 0</div>
-        </div>
+<!-- В блоке #ui замени на: -->
+<div id="ui">
+    <div id="score">Очки: <span>0</span></div>
+    <div id="highScore">Рекорд: <span>0</span></div>
+</div>
+
 
         <canvas id="gameCanvas"></canvas>
 
@@ -60,7 +62,7 @@
 
             <div id="gameOverScreen" class="hidden">
                 <h2>Игра окончена!</h2>
-                <p id="finalScore">Очки: 0</p>
+                <p id="finalScore">Очки: <span>0</span></p>
                 <button id="restartBtn">Играть снова</button>
                 <button id="shareBtn">Поделиться результатом</button>
             </div>
