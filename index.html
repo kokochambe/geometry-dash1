@@ -2,51 +2,42 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geometry Dash - Technical Edition</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Geometry Dash - Техникум Edition</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Стили для авторизации */
+        #authSection {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .telegram-login-button {
+            display: inline-block;
+            background: #0088cc;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
 </head>
-<style>
-    #authSection {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 1000;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 15px;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        backdrop-filter: blur(10px);
-    }
-    
-    #userInfo {
-        display: none;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 10px;
-        border-radius: 10px;
-        margin-top: 10px;
-        text-align: center;
-    }
-    
-    .logout-btn {
-        background: #ff4757;
-        color: white;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 8px;
-        cursor: pointer;
-        margin-top: 8px;
-    }
-</style>
 <body>
     <div id="gameContainer">
-<!-- В блоке #ui замени на: -->
-<div id="ui">
-    <div id="score">Очки: <span>0</span></div>
-    <div id="highScore">Рекорд: <span>0</span></div>
-</div>
-
+        <div id="ui">
+            <div id="score">Очки: <span>0</span></div>
+            <div id="highScore">Рекорд: <span>0</span></div>
+        </div>
 
         <canvas id="gameCanvas"></canvas>
 
@@ -57,6 +48,7 @@
                 <button id="startBtn">Начать игру</button>
                 <div id="controls">
                     <p>Кликай для прыжка!</p>
+                    <p>Используй ПРОБЕЛ или клик мышкой</p>
                 </div>
             </div>
 
@@ -68,40 +60,38 @@
             </div>
         </div>
     </div>
-    <div id="authSection" style="position: fixed; bottom:20px; right: 20px; z-index: 1000;">
-    <script async 
-    src="https://telegram.org/js/telegram-widget.js?22"
-     data-telegram-login="echo_int_shirmanov_bot"
-      data-size="large"
-       data-auth-url="https://kokochambe.github.io/geometry-dash1/auth.html"
-        data-request-access="write">
-    </script>
+
+    <!-- Секция авторизации -->
+    <div id="authSection">
+        <script async 
+            src="https://telegram.org/js/telegram-widget.js?22"
+            data-telegram-login="echo_int_shirmanov_bot"
+            data-size="large"
+            data-auth-url="https://kokochambe.github.io/geometry-dash1/auth.html"
+            data-request-access="write">
+        </script>
+    </div>
 
     <script src="game.js"></script>
-
-    <script type="text/javascript">
+    
+    <script>
         function onTelegramAuth(user) {
-            // Сохраняем данные пользователя
             localStorage.setItem('tg_user', JSON.stringify(user));
-
-            // Показываем уведомление
             alert('Добро пожаловать, ' + user.first_name + '!\nТвой ID: ' + user.id);
-
-            // Можно отправить данные в бота
+            document.getElementById('authSection').style.display = 'none';
+            
             try {
-                Telegram.WebApp.sendData(JSON.stringify({
-                    action: 'telegram_login',
-                    user: user
-                }));
+                if (window.Telegram && Telegram.WebApp) {
+                    Telegram.WebApp.sendData(JSON.stringify({
+                        action: 'telegram_login',
+                        user: user
+                    }));
+                }
             } catch (e) {
                 console.log('WebApp not available:', e);
             }
-
-            // Скрываем кнопку авторизации после входа
-            document.getElementById('authSection').style.display = 'none';
         }
 
-        // Проверяем, авторизован ли пользователь при загрузке
         window.addEventListener('load', function() {
             const savedUser = localStorage.getItem('tg_user');
             if (savedUser) {
